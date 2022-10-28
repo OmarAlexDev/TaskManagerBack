@@ -72,7 +72,7 @@ app.post("/api/tasks",(req,res)=>{
             "content": req.body.content,
             "responsible": req.body.responsible,
             "date" : new Date().toDateString(),
-            "status" : req.body.responsible
+            "status" : false
         }
         tasks=tasks.concat(newTask)
         res.json(newTask)
