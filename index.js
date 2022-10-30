@@ -1,81 +1,56 @@
 require('dotenv').config();
+require('./db');
 const express = require('express')
-const cors = require('cors');
 const app = express()
-
-let tasks = [
-    {
-      "id": 1,
-      "content": "Buying groceries",
-      "responsible": "Walter White",
-      "date": "Fri Oct 28 2022",
-      "status": true
-    },
-    {
-      "id": 2,
-      "content": "Walking out dog",
-      "responsible": "Shaggy Shaggers",
-      "date": "Fri Oct 28 2022",
-      "status": false
-    },
-    {
-      "id": 3,
-      "content": "Calling plumber",
-      "responsible": "Luigi Bros",
-      "date": "Fri Oct 28 2022",
-      "status": true
-    },
-    {
-      "id": 4,
-      "content": "Pick up children from school",
-      "responsible": "Penny Wise",
-      "date": "Fri Oct 28 2022",
-      "status": false
-    }
-]
+const cors = require('cors');
+const mongoose = require('mongoose');
+const Task = require('./models/task')
 
 app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
 
 app.get("/api/tasks/",(req,res)=>{
-    res.json(tasks)
+    Task.find({})
+        .then(data=>res.json(data))
 })
 
 app.get("/api/tasks/:id",(req,res)=>{
-    const id = req.params.id
-    const task = tasks.filter(t=>t.id==id)
-    res.json(task)
+    Task.findById(req.params.id)
+        .then(data=>res.json(data))
 })
 
 app.put("/api/tasks/:id",(req,res)=>{
-    const id = req.params.id
-    console.log(req.body)
-    tasks=tasks.map(t=>{
-        if(t.id==id){
-            return {
-                ...t,
-                status:req.body.status
-            }
-        }
-        else{
-            return t
-        }
-    })
-    res.send('Modified task with id: '+id)
+    Task.findByIdAndUpdate(req.params.id,{status:req.body.status})
+    .then(result => {
+        res.status(201).json(result)
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({
+          error: err
+        })
+      })
 })
 
 app.post("/api/tasks",(req,res)=>{
     if(req.body!=undefined){
-        const newTask ={
-            "id": tasks.length+1,
+        const task = new Task({
             "content": req.body.content,
             "responsible": req.body.responsible,
-            "date" : new Date().toDateString(),
+            "date" : new Date(),
             "status" : false
-        }
-        tasks=tasks.concat(newTask)
-        res.json(newTask)
+        })
+        task.save()
+        .then(result => {
+            res.status(201).json(result)
+          })
+          .catch(err => {
+            console.log(err);
+            res.status(500).json({
+              error: err
+            })
+          })
     }else{
         return response.status(400).json({ 
             error: 'content missing' 
@@ -84,9 +59,8 @@ app.post("/api/tasks",(req,res)=>{
 })
 
 app.delete("/api/tasks/:id",(req,res)=>{
-    const id = req.params.id
-    tasks=tasks.filter(t=>t.id!=id)
-    res.status(204).end()
+    Task.findByIdAndRemove(req.params.id)
+        .then(res.status(204).end())
 })
 
 const PORT = process.env.PORT
