@@ -1,10 +1,19 @@
 const mongoose = require('mongoose')
 
 const taskSchema = new mongoose.Schema({
-    content: String,
-    responsible: String,
+    content: {
+      type: String,
+      required: true
+    },
+    responsible: {
+      type: String,
+      required : true
+    },
     date: Date,
-    status: Boolean
+    status: {
+      type: Boolean,
+      default : false
+    }
 })
 
 taskSchema.set('toJSON',{
