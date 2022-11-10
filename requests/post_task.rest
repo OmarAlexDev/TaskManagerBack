@@ -1,8 +1,8 @@
 POST http://localhost:3001/api/tasks/
-
 Content-Type: application/json
 
 {
-    "content": "Find Shoshana",
-    "important": true
+    "content" : "Find Shoshanna",
+    "responsible" : "Hanz Landa",
+    "important" : true
 }
