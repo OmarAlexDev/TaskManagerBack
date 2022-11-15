@@ -16,6 +16,10 @@ const taskSchema = new mongoose.Schema({
     status: {
       type: Boolean,
       default : false
+    },
+    user:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task'
     }
 })
 
