@@ -13,9 +13,12 @@ userRouter.get('/:id', async (request,response)=>{
 })
 
 userRouter.post('/', async(request,response)=>{
-    const {username,name,password} = request.body
-    if(!(username,password)){
-        return response.status(400).json({error:"Missing parameters"})
+    const {username,name,password,rePassword} = request.body
+    if((username && name && password && rePassword)==='' || (password!==rePassword)){
+        return response.status(400).json({error:"Invalid parameters"})
+    }
+    if(await User.findOne({username:username})!==null){
+        return response.status(400).json({error:"Username already in use"})
     }
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password,saltRounds)

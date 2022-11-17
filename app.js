@@ -25,7 +25,7 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use('/api/login',loginRouter)
 app.use('/api/users',userRouter)
-app.use('/api/tasks',taskRouter,middleware.extractToken)
+app.use('/api/tasks',middleware.extractToken,taskRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 

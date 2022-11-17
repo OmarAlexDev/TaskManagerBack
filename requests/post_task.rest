@@ -1,8 +1,8 @@
 POST http://localhost:3001/api/tasks/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik9tYWM1NiIsImlkIjoiNjM3M2M3M2EzNTZhNjRjODBjMDE3NjgwIiwiaWF0IjoxNjY4NjUxNTUwLCJleHAiOjE2Njg2NTUxNTB9.UwGxx8yIasNFQeulKmy9AAtbuYBIw8gQSQjGcxl8tlA
 
 {
     "content" : "Find Shoshanna",
-    "responsible" : "Hanz Landa",
-    "important" : true
+    "responsible" : "Hanz Landa"
 }

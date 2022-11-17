@@ -1,4 +1,7 @@
+const config = require('../utils/config')
+const jwt = require('jsonwebtoken')
 const Task = require('../models/task')
+const User = require('../models/user')
 const taskRouter = require('express').Router()
 
 taskRouter.get("/", async (req,res)=>{
@@ -21,12 +24,18 @@ taskRouter.put("/:id", async(req,res)=>{
 })
 
 taskRouter.post("/", async (req,res)=>{
-    if(req.body!=undefined){
+    const {content,responsible} = req.body
+    const decodedToken = jwt.verify(req.token,config.SECRET)
+    if((content&&responsible)!=undefined){
+        const parentUser = await User.findById(decodedToken.id)
         const task = new Task({
-            "content": req.body.content,
-            "responsible": req.body.responsible
+            "content": content,
+            "responsible": responsible,
+            "user": parentUser._id
         })
         const result = await task.save()
+        parentUser.tasks = parentUser.tasks.concat(result._id)
+        await parentUser.save()
         res.status(201).json(result)
           
     }else{
@@ -37,10 +46,17 @@ taskRouter.post("/", async (req,res)=>{
 })
 
 taskRouter.delete("/:id", async (req,res)=>{
-    const result = await Task.findByIdAndRemove(req.params.id)
-    res.status(204).json({
-        message: `Task with id ${req.params.id} deleted`
-    })
+    const decodedToken = jwt.verify(req.token,config.SECRET)
+    const taskToDelete = await Task.findById(req.params.id)
+    if (taskToDelete.user.toString()===decodedToken.id){
+        await taskToDelete.delete()
+        const parentUser = await User.findById(decodedToken.id)
+        parentUser.tasks = parentUser.tasks.filter(t=>t.toString()!==req.params.id)
+        await parentUser.save()
+        res.status(204).json({message: `Task with id ${req.params.id} deleted`})
+    }else{
+        res.status(401).json({error:"Unauthorized access for deletion"})
+    }
 })
 
 module.exports = taskRouter
