@@ -21,7 +21,7 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-    logger.error(error.message)
+    logger.error(error.name)
 
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
@@ -29,6 +29,8 @@ const errorHandler = (error, request, response, next) => {
       return response.status(400).json({ error: error.message })
     } else if(error.name ==='JsonWebTokenError'){
       return response.status(400).json({error: "Missing token in request"})
+    } else if(error.name ==='TokenExpiredError'){
+      return response.status(400).json({error: "Token expired"})
     }
     next(error)
 }
