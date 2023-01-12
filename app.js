@@ -11,7 +11,7 @@ const middleware = require('./utils/middleware')
 const mongoose = require('mongoose');
 
 mongoose.connect(config.MONGODB_URL);
-mongoose.connection.on('connected',()=>{
+mongoose.connection.on('connected',()=>{5
     logger.info("Connected to MongoDB")
 })
 
@@ -20,9 +20,20 @@ mongoose.connection.on('error',(err)=>{
 })
 
 app.use(cors())
+
+/*server test*/
+app.use(function (req, res, next) {
+    res.setHeader(
+      'Content-Security-Policy',
+      "'self' *.mapfre.com.mx *.mapfre.com *.mapfre.net *.cloudfront.net"
+    );
+    next();
+})
+
 app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
+
 app.use('/api/login',loginRouter)
 app.use('/api/users',userRouter)
 app.use('/api/tasks',middleware.extractToken,taskRouter)
