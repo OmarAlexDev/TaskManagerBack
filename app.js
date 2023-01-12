@@ -21,7 +21,7 @@ mongoose.connection.on('error',(err)=>{
 
 app.use(cors())
 
-/*server test*/
+/* server test */
 app.use(function (req, res, next) {
     res.setHeader(
       'Content-Security-Policy',
