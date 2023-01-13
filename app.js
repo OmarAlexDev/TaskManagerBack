@@ -25,7 +25,7 @@ app.use(cors())
 app.use(function (req, res, next) {
     res.setHeader(
       'Content-Security-Policy',
-      "frame-ancestors 'self' *.mapfre.com.mx *.mapfre.com *.mapfre.net *.cloudfront.net"
+      "frame-ancestors 'self' *.mapfre.com.mx *.mapfre.com *.mapfre.net *.cloudfront.net http://ionic.local.mapfre.com.mx"
     );
     next();
 })
