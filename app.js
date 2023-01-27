@@ -24,9 +24,10 @@ app.use(cors())
 /* server test */
 app.use(function (req, res, next) {
     var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    var second_fullUrl = req.get('Referer')
     res.setHeader(
       'Content-Security-Policy',
-      `frame-ancestors 'self' *.mapfre.com.mx *.mapfre.com *.mapfre.net *.cloudfront.net http://ionic.local.mapfre.com.mx ionic://* ${fullUrl ? fullUrl : ""}`
+      `frame-ancestors 'self' *.mapfre.com.mx *.mapfre.com *.mapfre.net *.cloudfront.net http://ionic.local.mapfre.com.mx ionic://* ${fullUrl ? fullUrl : ""} ${second_fullUrl ? second_fullUrl : ""}`
     );
     next();
 })
